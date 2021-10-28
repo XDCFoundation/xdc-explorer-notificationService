@@ -1,87 +1,107 @@
 /**
- * Created by AyushK on 18/09/20.
+ * Created by jayeshc on 8/25/16.
  */
+const Constants = require('../common/constants');
+const CONFIG = require('../../config/index');
+const HttpService = require('../service/http-service');
+var querystring = require('querystring');
+var https = require('https');
+var lhtLog = require('../../LHTLogLibrary/index');
+module.exports = {
+    respond,
+    respondWithArray,
+    getErrorModel,
+    getErrorModelWithErrorCode,
+    respondWithCode,
+    LHTWebLogs,
+    LHTLog,
+    sendNotificationToZapier
+};
 
-'use strict'
-import { apiFailureMessage, httpConstants } from '../common/constants'
-
-export default class Utils {
-  static response (res, data, message, success, code) {
-    const responseObj = {
-      responseData: data,
-      message: message,
-      success: success,
-      responseCode: code
-    }
+function respond(res, data, message, success) {
     res.format({
-      json: () => {
-        res.send(responseObj)
-      }
-    })
-  }
+        json: () => {
+            var messageObj = {
+                "param": "",
+                "msg": message
+            };
+            var messages = [messageObj];
+            var responseObj = {
+                responseData: data,
+                message: messages,
+                success: success
+            };
+            res.json(responseObj);
+        }
+    });
+}
 
-  static responseForValidation (res, errorArray, success, code = 400) {
-    const responseObj = {
-      message: 'Invalid Request',
-      errors: errorArray,
-      success: success,
-      responseCode: code
-    }
+function respondWithCode(res, data, message, success, code) {
     res.format({
-      json: () => {
-        res.send(responseObj)
-      }
-    })
-  }
+        json: () => {
+            var messageObj = {
+                "param": "",
+                "msg": message,
+                "errorCode": code
+            };
+            var messages = [messageObj];
+            var responseObj = {
+                responseData: data,
+                message: messages,
+                success: success
+            };
+            res.json(responseObj);
+        }
+    });
+}
 
-  static handleError (err, req, res) {
-    if (!res) { return false }
-    err = err || {}
-    const msg = err.message ? err.message : apiFailureMessage.INTERNAL_SERVER_ERROR
-    const code = err.code ? err.code : httpConstants.RESPONSE_CODES.SERVER_ERROR
-    this.response(res, {}, msg, httpConstants.RESPONSE_STATUS.FAILURE, code)
-  }
+function respondWithArray(res, data, message, success) {
+    res.format({
+        json: () => {
 
-  /**
-   * This function is made to handle success and error callback!
-   * @param promise
-   * @returns {Promise<Promise|Bluebird<*[] | R>|Bluebird<any | R>|*|Promise<T | *[]>>}
-   */
-  static async parseResponse (promise) {
-    return promise.then(data => {
-      return [null, data]
-    }).catch(err => [err])
-  }
+            var responseObj = {
+                responseData: data,
+                message: message,
+                success: success
+            };
+            res.json(responseObj);
+        }
+    });
+}
 
-  /**
-   * To throw error
-   * @param data
-   * @param message
-   * @param code
-   * @returns {{code: number, data: *, message: *}}
-   */
-  static error (data, message, code = 500) {
-    return {
-      data: data,
-      message: message,
-      code: code
-    }
-  }
+function LHTWebLogs(messageText, message) {
+    console.log(messageText, message);
+}
 
-  static getFormattedDate () {
-    const date = new Date()
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-  }
+function getErrorModel(obj, message) {
+    return {message: message, data: obj}
+}
 
-  /**
-   * @param functionName
-   * @param message
-   * @param payload:should be in object form
-   * @param developerAlias
-   * @param logType ["INFO", "WARNING", "ERROR"]
-   * @constructor
-   */
-  static lhtLog (functionName, message, payload, developerAlias, logType = 'INFO') {
-    console.log(`[ ${this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(payload)}: Developer : ${developerAlias}`)
-  }
+function getErrorModelWithErrorCode(obj, message, errorCode) {
+    return {message: message, data: obj, errCode: errorCode}
+}
+
+/**
+ *
+ * @param functionName
+ * @param message
+ * @param payload:should be in object form
+ * @param developerAlias
+ * @param requestID
+ * @param type
+ * @param timestamp
+ * @constructor
+ */
+function LHTLog(functionName, message, payload, developerAlias, requestID = '', type = 'info', timestamp = (new Date()).getTime()) {
+    if (CONFIG && CONFIG.IS_LOG_ENABLE === "true") {
+        lhtLog.LHTWeblogs(message, payload, functionName, Constants.SERVICE_NAME, developerAlias, requestID, type, timestamp);
+   }
+    // console.log('\nserviceName:' + Constants.SERVICE_NAME + '\nfunctionName:' + functionName + '\nmessage:' + message + '\npayload:' + payload + '\ndeveloperAlias:' + developerAlias + '\nrequestID:' + requestID + '\ntype:' + type + '\ntimestamp:' + timestamp);
+    //writeStream.write('functionName:'+functionName+'message:'+ message+'payload:'+ payload+'developerAlias:'+ developerAlias+'requestID:'+requestID+'type:'+type+'timestamp:'+timestamp)
+}
+
+function sendNotificationToZapier(payload, zapierUrl) {
+    if (!payload || !zapierUrl)
+        return;
+    return HttpService.executeHttpRequestWithRQ(Constants.METHOD_TYPE.POST, zapierUrl, '', payload, Constants.HTTP.HEADER_TYPE.APPLICATION_JSON);
 }

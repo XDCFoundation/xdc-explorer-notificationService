@@ -1,0 +1,355 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Notification API"
+  },
+  "paths": {
+    "/add-to-notifications": {
+      "post": {
+        "description": "add notifications",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [{
+          "name": "type",
+          "in": "formData",
+          "required": true,
+          "type": "string",
+          "description": ""
+        },{
+          "name": "data",
+          "in": "formData",
+          "required": true,
+          "type": "string",
+          "description": ""
+        }],
+        "responses": {
+          "200": {
+            "description": "notifications added successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "responseData": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/responseMessage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{userID}/{notificationFor}/{entityID}": {
+      "get": {
+        "description": "get list of notifications",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "description": "user Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "notificationFor",
+            "in": "path",
+            "description": "notification for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "entityID",
+            "in": "path",
+            "description": "entity Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "notifications list successfully fetched",
+            "schema": {
+              "$ref": "#/definitions/notificationsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mark-notification-read": {
+      "post": {
+        "description": "Mark notification read",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "formData",
+            "description": "notification Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "notifications marked read successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "responseData": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/responseMessage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mark-notification-unread": {
+      "post": {
+        "description": "Mark notification unread",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "formData",
+            "description": "notification Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "notifications marked unread successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "responseData": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/responseMessage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mark-all-notification-read": {
+      "post": {
+        "description": "Mark all notification read",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "formData",
+            "description": "user Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "notificationFor",
+            "in": "formData",
+            "description": "notification for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "entityID",
+            "in": "formData",
+            "description": "entity id",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "notifications marked unread successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "responseData": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "userID": {
+                      "type": "string"
+                    },
+                    "notificationFor": {
+                      "type": "string"
+                    },
+                    "entityID": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/responseMessage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "notificationsResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "default": true
+        },
+        "responseData": {
+          "title": "Notifications",
+          "type": "object",
+          "properties": {
+            "unreadCount": {
+              "type": "number"
+            },
+            "notifications": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
+          }
+        },
+        "message": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/responseMessage"
+          }
+        }
+      }
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "modifiedOn": {
+          "type": "number"
+        },
+        "addedOn": {
+          "type": "number"
+        },
+        "isRead": {
+          "type": "boolean"
+        },
+        "deviceID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "string"
+        },
+        "sentFromName": {
+          "type": "string"
+        },
+        "sentFromEmail": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "entityID": {
+          "type": "string"
+        },
+        "notificationFor": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "isDelivered": {
+          "type": "boolean"
+        },
+        "postedToDeviceType": {
+          "type": "string"
+        },
+        "postedTo": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "responseMessage": {
+      "type": "object",
+      "properties": {
+        "param": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

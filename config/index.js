@@ -1,24 +1,31 @@
 /**
- * Created by AyushK on 17/09/20.
+ * Module dependencies.
  */
 
-const path = require('path')
-const extend = require('util')._extend
-const local = require('./env/local')
-const development = require('./env/development')
-const test = require('./env/test')
-const production = require('./env/production')
-const defaults = {
-  root: path.normalize(__dirname + '/..')
-}
+var path = require('path');
+var extend = require('util')._extend;
+
+var local = require('./env/local');
+var development = require('./env/development');
+var test = require('./env/test');
+var production = require('./env/production');
+
+
+var defaults = {
+    root: path.normalize(__dirname + '/..')
+};
 
 /**
  * Expose
  */
 
 module.exports = {
-  development: extend(development, defaults),
-  test: extend(test, defaults),
-  production: extend(production, defaults),
-  local: extend(local, defaults)
-}[process.env.NODE_ENV || 'development']
+    development: extend(development, defaults),
+    test: extend(test, defaults),
+    production: extend(production, defaults),
+    local: extend(local, defaults)
+
+}[process.env.NODE_ENV || 'development'];
+
+
+
