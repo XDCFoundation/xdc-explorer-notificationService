@@ -43,7 +43,7 @@ module.exports = {
     NOTIFICATION_COUNT_FETCHED_SUCCESSFULLY: 'Notification count fetched successfully.',
     NOTIFICATION_FETCHED_SUCCESSFULLY: 'Notification list fetched successfully.',
     FAILED_TO_FETCHED_NOTIFICATION_COUNT: 'Failed to fetch notification count.',
-    FAILED_TO_FETCHED_NOTIFICATION_LIST: 'Failed to fetch notification list.',
+    FAILED_TO_FETCHED_NOTIFICATION_LIST: 'No Notifications.',
     NOTIFICATION_MARKED_READ_SUCCESSFULLY: 'Notification marked read successfully.',
     NOTIFICATION_MARKED_READ_FAILED: 'Failed to mark notification read.',
     NOTIFICATION_MARKED_UNREAD_SUCCESSFULLY: 'Notification marked unread successfully.',
